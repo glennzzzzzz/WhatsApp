@@ -62,8 +62,6 @@ if uploaded_file is not None:
         
         df = data_transform.transform(data)
         
-    st.write(df)    
-        
     # Unique users dropdown
     user_list = df['user'].unique().tolist()
     if 'whatsapp notifcation' in user_list:

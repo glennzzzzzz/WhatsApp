@@ -14,16 +14,17 @@ def transform(data):
     # basically finds all the dates
     dates = re.findall(pattern, data)
 
-
     # Converting to DataFrame
     df = pd.DataFrame({'user_message': messages, 'message_date': dates})
-
-    # Converting to Date Format
-    df['message_date'] = pd.to_datetime(df['message_date'], errors='coerce', format="%d/%m/%Y, %I:%M %p - ")  # handles 12-hour format with AM/PM
     
-    # If any date parsing failed due to format, try parsing with 24-hour format
-    df['message_date'] = df['message_date'].fillna(pd.to_datetime(df['message_date'], format="%d/%m/%Y, %H:%M - ", errors='coerce'))
-    
+    # Converting Date Format
+    if 'AM' in dates[0].upper() or 'PM' in dates[0].upper():
+            # Convert using 12-hour format
+            df['message_date'] = pd.to_datetime(df['message_date'], format="%d/%m/%Y, %I:%M %p - ", errors='coerce')
+            
+    else:
+        # Convert using 24-hour format
+        df['message_date'] = pd.to_datetime(df['message_date'], format="%d/%m/%Y, %H:%M - ", errors='coerce')
     
     df.rename(columns={'message_date': 'date'}, inplace=True)
 
@@ -57,3 +58,4 @@ def transform(data):
     df['minute'] = df['date'].dt.minute
     
     return df
+

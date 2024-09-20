@@ -61,6 +61,8 @@ if uploaded_file is not None:
         data = bytes_data.decode('utf-8')        
         
         df = data_transform.transform(data)
+
+    st.write(df)
         
     # Unique users dropdown
     user_list = df['user'].unique().tolist()

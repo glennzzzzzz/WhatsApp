@@ -9,7 +9,6 @@ import pandas as pd
 
 
 
-
 def fetch_data(dataframe, user):
     
     if user != 'Everyone':

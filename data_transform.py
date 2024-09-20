@@ -6,7 +6,7 @@ import pandas as pd
 def transform(data):
     
     # the pattern to split the data into just user messages
-    pattern = r'\d{1,2}/\d{1,2}/\d{2,4},\s\d{1,2}:\d{1,2}\s-\s'
+    pattern = r'\d{1,2}/\d{1,2}/\d{2,4},\s\d{1,2}:\d{2}(?:\s?[APMapm]{2})?\s-\s'
 
     # Gets all the user messages ([1:] is just because without it there is an empty string)
     messages = re.split(pattern, data)[1:]
@@ -19,7 +19,12 @@ def transform(data):
     df = pd.DataFrame({'user_message': messages, 'message_date': dates})
 
     # Converting to Date Format
-    df['message_date'] = pd.to_datetime(df['message_date'], format="%d/%m/%Y, %H:%M - ")
+    df['message_date'] = pd.to_datetime(df['message_date'], errors='coerce', format="%d/%m/%Y, %I:%M %p - ")  # handles 12-hour format with AM/PM
+    
+    # If any date parsing failed due to format, try parsing with 24-hour format
+    df['message_date'] = df['message_date'].fillna(pd.to_datetime(df['message_date'], format="%d/%m/%Y, %H:%M - ", errors='coerce'))
+    
+    
     df.rename(columns={'message_date': 'date'}, inplace=True)
 
 
